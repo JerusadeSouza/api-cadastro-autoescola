@@ -1,0 +1,19 @@
+{
+  "name": "api-cadastro-auto-escola",
+  "version": "1.0.0",
+  "description": "API para controle de gastos dos carros da auto escola",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha \"login/**/*.test.js\" \"gastos/**/*.test.js\""
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
+    "supertest": "^7.1.0"
+  }
+}
