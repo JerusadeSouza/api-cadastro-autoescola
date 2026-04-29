@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AUT-1 - Protótipos</title>
+  <style>
+    :root {
+      --bg: #f3f7f5;
+      --surface: #ffffff;
+      --line: #d6e0dc;
+      --text: #142022;
+      --muted: #687779;
+      --primary: #065c50;
+      --primary-soft: #dff2ed;
+      --blue: #164f8a;
+      --blue-soft: #e5f0ff;
+      --green: #228a56;
+      --amber: #c97914;
+      --red: #bd2e2e;
+      --red-soft: #ffe8e6;
+      --dark: #0b2826;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #dfe7e4;
+      color: var(--text);
+      font-family: Inter, Arial, sans-serif;
+      padding: 28px;
+    }
+
+    .canvas {
+      display: grid;
+      gap: 32px;
+    }
+
+    .screen {
+      width: 1440px;
+      min-height: 900px;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgb(20 32 34 / 18%);
+    }
+
+    .screen-title {
+      position: absolute;
+      left: 28px;
+      top: 22px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand-panel {
+      position: absolute;
+      left: 96px;
+      top: 96px;
+      width: 520px;
+      height: 708px;
+      background: var(--dark);
+      border-radius: 16px;
+      padding: 52px 46px;
+      color: white;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 38px; line-height: 1.08; max-width: 420px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    .muted { color: var(--muted); }
+    .brand-panel p { color: #cee4df; font-size: 18px; line-height: 1.35; margin-top: 36px; max-width: 390px; }
+
+    .metrics-row { display: flex; gap: 20px; margin-top: 70px; }
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px 20px;
+      min-height: 110px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: var(--green);
+    }
+    .metric.amber::before { background: var(--amber); }
+    .metric.blue::before { background: var(--blue); }
+    .metric.red::before { background: var(--red); }
+    .metric small { display: block; color: var(--muted); font-weight: 700; font-size: 12px; }
+    .metric strong { display: block; color: var(--text); font-size: 28px; margin-top: 10px; }
+    .metric span { display: block; color: var(--muted); font-size: 12px; margin-top: 8px; }
+    .brand-panel .metric { width: 180px; }
+
+    .pill-row { display: flex; gap: 18px; margin-top: 70px; }
+    .pill {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 14px;
+      white-space: nowrap;
+    }
+
+    .login-card {
+      position: absolute;
+      left: 760px;
+      top: 150px;
+      width: 430px;
+      height: 560px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 54px 50px;
+    }
+    .login-card h2 { font-size: 34px; margin-bottom: 12px; }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin: 26px 0 8px;
+    }
+    .field {
+      height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      color: var(--text);
+      background: white;
+      font-size: 14px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 0 18px;
+    }
+    .button.secondary { background: white; color: var(--primary); border-color: var(--line); }
+    .button.danger { background: var(--red); color: white; }
+    .full { width: 100%; height: 48px; margin-top: 28px; }
+    .error {
+      margin-top: 22px;
+      background: var(--red-soft);
+      border: 1px solid #f2aaa4;
+      color: var(--red);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .app { min-height: 1024px; }
+    .sidebar {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 220px;
+      background: var(--dark);
+      color: white;
+      padding: 28px 18px;
+    }
+    .logo { font-size: 22px; font-weight: 900; line-height: 1.1; margin-left: 10px; }
+    .jira-pill { display: inline-block; margin: 34px 0 36px 10px; }
+    .nav-item {
+      height: 42px;
+      border-radius: 8px;
+      padding: 12px 20px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .nav-item.active { background: var(--primary); }
+    .topbar {
+      position: absolute;
+      left: 220px;
+      right: 0;
+      top: 0;
+      height: 76px;
+      background: white;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 94px 0 32px;
+    }
+    .user { color: var(--muted); font-weight: 700; font-size: 14px; }
+    .content { position: absolute; left: 252px; top: 108px; right: 70px; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .filters {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: 210px 190px 130px 120px;
+      gap: 20px;
+      align-items: end;
+      width: 760px;
+    }
+    .filters label { margin-top: 0; }
+    .filters .field { height: 38px; }
+
+    .main-work {
+      display: grid;
+      grid-template-columns: 760px 330px;
+      gap: 28px;
+      margin-top: 24px;
+    }
+    .table-panel { min-height: 430px; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 24px; font-size: 13px; }
+    th { text-align: left; color: var(--muted); font-size: 12px; }
+    td { background: white; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 12px 10px; }
+    tr.selected td { background: var(--primary-soft); }
+    td:first-child { border-left: 1px solid var(--line); border-radius: 6px 0 0 6px; }
+    td:last-child { border-right: 1px solid var(--line); border-radius: 0 6px 6px 0; color: var(--primary); font-weight: 700; }
+    .empty { margin-top: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 16px; font-size: 12px; color: var(--muted); }
+
+    .form-panel label { margin-top: 18px; }
+    .form-panel .field { height: 38px; }
+    .form-panel .textarea { height: 66px; }
+    .form-actions { display: flex; gap: 12px; margin-top: 24px; }
+
+    .bottom-row {
+      display: grid;
+      grid-template-columns: 760px 330px;
+      gap: 28px;
+      margin-top: 24px;
+    }
+    .detail-actions { float: right; display: flex; gap: 12px; margin-top: -4px; }
+    .modal p, .detail p { line-height: 1.45; margin-top: 18px; font-size: 14px; }
+    .modal p { font-size: 12px; color: var(--muted); }
+
+    .api-layout {
+      position: absolute;
+      left: 252px;
+      top: 108px;
+      display: grid;
+      grid-template-columns: 300px 760px;
+      gap: 32px;
+    }
+    .endpoint-list { min-height: 720px; }
+    .endpoint-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px 16px;
+      margin-top: 18px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .endpoint-item.active { color: var(--blue); background: var(--blue-soft); }
+    .swagger { min-height: 720px; }
+    .endpoint-block {
+      display: grid;
+      grid-template-columns: 82px 260px 1fr;
+      gap: 12px;
+      align-items: start;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-top: 20px;
+      min-height: 88px;
+    }
+    .method {
+      color: white;
+      border-radius: 5px;
+      padding: 7px 10px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .method.post { background: var(--green); }
+    .method.get { background: var(--blue); }
+    .method.patch { background: var(--amber); }
+    .method.delete { background: var(--red); }
+    code {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+      white-space: normal;
+      font-family: Consolas, monospace;
+    }
+
+    .coverage {
+      width: 1440px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px 32px;
+      box-shadow: 0 24px 70px rgb(20 32 34 / 12%);
+    }
+    .coverage p { line-height: 1.45; margin-top: 18px; font-size: 16px; }
+
+    @media (max-width: 900px) {
+      body { padding: 18px; }
+      .canvas {
+        transform: scale(.41);
+        transform-origin: top left;
+        width: 3512px;
+        gap: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="canvas">
+    <section class="screen">
+      <div class="screen-title">Tela 1 - Login autenticado (AUT-2)</div>
+      <div class="brand-panel">
+        <h1>Controle de gastos dos veículos da autoescola</h1>
+        <p>Acompanhe custos operacionais, apoie decisões de manutenção e melhore a previsibilidade financeira.</p>
+        <div class="metrics-row">
+          <div class="metric"><small>Mês atual</small><strong>R$ 8.420</strong><span>12 registros</span></div>
+          <div class="metric amber"><small>Maior gasto</small><strong>Pneus</strong><span>40% do mês</span></div>
+        </div>
+        <div class="pill-row">
+          <span class="pill">Login com token</span>
+          <span class="pill">API segura</span>
+        </div>
+      </div>
+      <form class="login-card">
+        <h2>Entrar</h2>
+        <p class="muted">Use suas credenciais para acessar o painel de gastos.</p>
+        <label>Username *</label>
+        <div class="field"></div>
+        <label>Password *</label>
+        <div class="field"></div>
+        <div class="button full">Entrar</div>
+      </form>
+    </section>
+
+    <section class="screen app">
+      <aside class="sidebar">
+        <div class="logo">Autoescola<br>Custos</div>
+        <span class="pill jira-pill">AUT-1</span>
+        <div class="nav-item active">Gastos</div>
+        <div class="nav-item">API Swagger</div>
+      </aside>
+      <header class="topbar">
+        <h2>Painel de gastos dos veículos</h2>
+        <div class="user">Jerusa - Gestor</div>
+      </header>
+      <div class="content">
+        <div class="dashboard-grid">
+          <div class="metric"><small>Total filtrado</small><strong>R$ 8.420,00</strong><span>Abril / 2026</span></div>
+          <div class="metric blue"><small>Registros</small><strong>24</strong><span>Lista retornou 200</span></div>
+          <div class="metric amber"><small>Tipo principal</small><strong>Manutenção</strong><span>48% dos gastos</span></div>
+          <div class="metric red"><small>Veículo crítico</small><strong>Carro 02</strong><span>R$ 2.180,00</span></div>
+        </div>
+        <div class="panel filters">
+          <div><label>Veículo</label><div class="field">Todos os veículos</div></div>
+          <div><label>Tipo</label><div class="field">Todos os tipos</div></div>
+          <div class="button">Filtrar</div>
+          <div class="button secondary">Limpar</div>
+        </div>
+        <div class="main-work">
+          <div class="panel table-panel">
+            <h2>Gastos cadastrados</h2>
+            <p class="muted" style="font-size:13px;margin-top:8px">Selecione uma linha para consultar por identificador.</p>
+            <table>
+              <thead><tr><th>ID</th><th>Veículo</th><th>Tipo</th><th>Valor</th><th>Data</th><th>Ações</th></tr></thead>
+              <tbody>
+                <tr class="selected"><td>G-1024</td><td>Carro 02</td><td>Manutenção</td><td>R$ 780,00</td><td>28/04</td><td>Ver Editar Excluir</td></tr>
+                <tr><td>G-1023</td><td>Moto 01</td><td>Combustível</td><td>R$ 120,00</td><td>27/04</td><td>Ver Editar Excluir</td></tr>
+                <tr><td>G-1022</td><td>Carro 04</td><td>Pneus</td><td>R$ 1.600,00</td><td>22/04</td><td>Ver Editar Excluir</td></tr>
+                <tr><td>G-1021</td><td>Carro 01</td><td>Lavagem</td><td>R$ 55,00</td><td>20/04</td><td>Ver Editar Excluir</td></tr>
+                <tr><td>G-1020</td><td>Carro 02</td><td>Óleo</td><td>R$ 240,00</td><td>18/04</td><td>Ver Editar Excluir</td></tr>
+              </tbody>
+            </table>
+            <div class="empty">Estado vazio previsto: Nenhum gasto cadastrado + ação Cadastrar gasto.</div>
+          </div>
+          <div class="panel form-panel">
+            <h3>Novo gasto / edição</h3>
+            <p class="muted" style="font-size:12px;line-height:1.3;margin-top:8px">Mesmo painel cobre cadastro 201 e atualização 200.</p>
+            <label>Veículo *</label><div class="field">Carro 02</div>
+            <label>Tipo *</label><div class="field">Manutenção</div>
+            <label>Valor *</label><div class="field">780,00</div>
+            <label>Data *</label><div class="field">2026-04-28</div>
+            <label>Descrição</label><div class="field textarea">Troca de pastilhas de freio</div>
+            <div class="form-actions"><div class="button">Salvar</div><div class="button secondary">Cancelar</div></div>
+          </div>
+        </div>
+        <div class="bottom-row">
+          <div class="panel detail">
+            <div class="detail-actions"><div class="button secondary">Editar</div><div class="button danger">Excluir</div></div>
+            <h3>Detalhe do gasto G-1024</h3>
+            <p>Veículo: Carro 02 | Tipo: Manutenção | Valor: R$ 780,00<br>Data: 28/04/2026 | Descrição: Troca de pastilhas de freio</p>
+          </div>
+          <div class="panel modal">
+            <h3>Excluir gasto?</h3>
+            <p>Confirme a remoção do gasto G-1024. Sucesso esperado: 204. Erro previsto: 404.</p>
+            <div class="form-actions"><div class="button secondary">Cancelar</div><div class="button danger">Excluir</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <aside class="sidebar">
+        <div class="logo">Autoescola<br>Custos</div>
+        <span class="pill jira-pill">AUT-1</span>
+        <div class="nav-item">Gastos</div>
+        <div class="nav-item active">API Swagger</div>
+      </aside>
+      <header class="topbar">
+        <h2>Documentação da API</h2>
+        <div class="user">Jerusa - Gestor</div>
+      </header>
+      <div class="api-layout">
+        <div class="panel endpoint-list">
+          <h2>Endpoints</h2>
+          <div class="endpoint-item active">POST /login</div>
+          <div class="endpoint-item">GET /gastos</div>
+          <div class="endpoint-item">POST /gastos</div>
+          <div class="endpoint-item">GET /gastos/{id}</div>
+          <div class="endpoint-item">PATCH /gastos/{id}</div>
+          <div class="endpoint-item">DELETE /gastos/{id}</div>
+        </div>
+        <div class="panel swagger">
+          <h2>Swagger UI - Autoescola Gastos API</h2>
+          <p class="muted" style="font-size:14px;line-height:1.35;margin-top:12px">Documentação acessível com exemplos básicos de requisição e resposta para login e gastos.</p>
+          <div class="endpoint-block">
+            <span class="method post">POST</span><strong>/login</strong><code>{ "username": "gestor.autoescola", "password": "••••" }<br>200 { "token": "jwt..." } | 400 | 401</code>
+          </div>
+          <div class="endpoint-block">
+            <span class="method get">GET</span><strong>/gastos?veiculoId=&tipo=</strong><code>Authorization: Bearer token<br>200 [ { id, veiculoId, tipo, valor, data, descricao } ]</code>
+          </div>
+          <div class="endpoint-block">
+            <span class="method post">POST</span><strong>/gastos</strong><code>{ veiculoId, tipo, valor, data, descricao }<br>201 { id, veiculoId, tipo, valor, data, descricao }</code>
+          </div>
+          <div class="endpoint-block">
+            <span class="method patch">PATCH</span><strong>/gastos/{id}</strong><code>{ valor: 820.00, descricao: "Correção" }<br>200 gasto atualizado | 404</code>
+          </div>
+          <div class="endpoint-block">
+            <span class="method delete">DELETE</span><strong>/gastos/{id}</strong><code>Authorization: Bearer token<br>204 sem corpo | 404</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="coverage">
+      <h2>Cobertura AUT-1</h2>
+      <p>AUT-2 Login | AUT-3 Cadastro | AUT-4 Listagem | AUT-5 Consulta por ID | AUT-6 Atualização | AUT-7 Exclusão | AUT-8 Filtros por veículo e tipo | AUT-9 Swagger.</p>
+      <p>Decisão de UX: manter o CRUD completo no Painel de gastos usando formulário lateral, detalhe integrado e modal apenas para exclusão, economizando telas sem sacrificar clareza.</p>
+    </section>
+  </main>
+</body>
+</html>

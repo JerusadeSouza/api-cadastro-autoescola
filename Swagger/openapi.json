@@ -1,28 +1,35 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "API Cadastro Auto Escola - Controle de Gastos",
+    "title": "API Cadastro Auto Escola",
     "version": "1.0.0",
-    "description": "API para login e controle de gastos dos veiculos da auto escola."
+    "description": "Especificacao OpenAPI da API REST de autenticacao e controle de gastos dos veiculos da auto escola."
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3000",
+      "description": "Ambiente local"
     }
   ],
   "tags": [
     {
-      "name": "Login"
+      "name": "Autenticacao",
+      "description": "Operacoes de login da aplicacao"
     },
     {
-      "name": "Gastos"
+      "name": "Gastos",
+      "description": "Operacoes de consulta e manutencao de gastos dos veiculos"
     }
   ],
   "paths": {
     "/login": {
       "post": {
-        "tags": ["Login"],
+        "tags": [
+          "Autenticacao"
+        ],
         "summary": "Realiza o login do usuario",
+        "description": "Valida username e password contra os usuarios carregados em memoria e retorna um token simples para uso pela aplicacao.",
+        "operationId": "login",
         "requestBody": {
           "required": true,
           "content": {
@@ -39,33 +46,122 @@
         },
         "responses": {
           "200": {
-            "description": "Login realizado com sucesso"
+            "description": "Login realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                },
+                "example": {
+                  "message": "Login realizado com sucesso.",
+                  "token": "token-1-admin",
+                  "user": {
+                    "id": 1,
+                    "username": "admin",
+                    "role": "gestor"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Username ou password ausentes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Username e password sao obrigatorios."
+                }
+              }
+            }
           },
           "401": {
-            "description": "Credenciais invalidas"
+            "description": "Credenciais invalidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Credenciais invalidas."
+                }
+              }
+            }
           }
         }
       }
     },
     "/gastos": {
       "get": {
-        "tags": ["Gastos"],
+        "tags": [
+          "Gastos"
+        ],
         "summary": "Lista os gastos cadastrados",
+        "description": "Retorna todos os gastos ou filtra por veiculoId e tipo.",
+        "operationId": "listarGastos",
+        "parameters": [
+          {
+            "name": "veiculoId",
+            "in": "query",
+            "required": false,
+            "description": "Filtra os gastos por identificador do veiculo.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "CAR-001"
+          },
+          {
+            "name": "tipo",
+            "in": "query",
+            "required": false,
+            "description": "Filtra os gastos por tipo.",
+            "schema": {
+              "$ref": "#/components/schemas/TipoGasto"
+            },
+            "example": "combustivel"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Lista retornada com sucesso"
+            "description": "Lista de gastos retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Gasto"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "veiculoId": "CAR-001",
+                    "tipo": "combustivel",
+                    "valor": 350.75,
+                    "data": "2026-04-01",
+                    "descricao": "Abastecimento do inicio do mes"
+                  }
+                ]
+              }
+            }
           }
         }
       },
       "post": {
-        "tags": ["Gastos"],
-        "summary": "Cria um novo gasto do veiculo",
+        "tags": [
+          "Gastos"
+        ],
+        "summary": "Cria um novo gasto",
+        "description": "Cadastra um gasto para um veiculo. Os campos veiculoId, tipo, valor e data sao obrigatorios.",
+        "operationId": "criarGasto",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GastoRequest"
+                "$ref": "#/components/schemas/GastoCreateRequest"
               },
               "example": {
                 "veiculoId": "CAR-002",
@@ -79,48 +175,79 @@
         },
         "responses": {
           "201": {
-            "description": "Gasto criado com sucesso"
+            "description": "Gasto criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gasto"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Dados obrigatorios ausentes"
+            "description": "Payload invalido ou incompleto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "veiculoId, tipo, valor e data sao obrigatorios."
+                }
+              }
+            }
           }
         }
       }
     },
     "/gastos/{id}": {
       "get": {
-        "tags": ["Gastos"],
+        "tags": [
+          "Gastos"
+        ],
         "summary": "Busca um gasto por id",
+        "operationId": "buscarGastoPorId",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/GastoIdParam"
           }
         ],
         "responses": {
           "200": {
-            "description": "Gasto encontrado"
+            "description": "Gasto encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gasto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Gasto nao encontrado"
+            "description": "Gasto nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Gasto nao encontrado."
+                }
+              }
+            }
           }
         }
       },
       "put": {
-        "tags": ["Gastos"],
+        "tags": [
+          "Gastos"
+        ],
         "summary": "Atualiza um gasto por id",
+        "description": "Atualiza parcialmente os campos do gasto informado.",
+        "operationId": "atualizarGasto",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/GastoIdParam"
           }
         ],
         "requestBody": {
@@ -139,24 +266,39 @@
         },
         "responses": {
           "200": {
-            "description": "Gasto atualizado com sucesso"
+            "description": "Gasto atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gasto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Gasto nao encontrado"
+            "description": "Gasto nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Gasto nao encontrado."
+                }
+              }
+            }
           }
         }
       },
       "delete": {
-        "tags": ["Gastos"],
+        "tags": [
+          "Gastos"
+        ],
         "summary": "Remove um gasto por id",
+        "operationId": "deletarGasto",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/GastoIdParam"
           }
         ],
         "responses": {
@@ -164,46 +306,174 @@
             "description": "Gasto removido com sucesso"
           },
           "404": {
-            "description": "Gasto nao encontrado"
+            "description": "Gasto nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Gasto nao encontrado."
+                }
+              }
+            }
           }
         }
       }
     }
   },
   "components": {
+    "parameters": {
+      "GastoIdParam": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Identificador numerico do gasto.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "example": 1
+      }
+    },
     "schemas": {
+      "TipoGasto": {
+        "type": "string",
+        "enum": [
+          "oleo",
+          "combustivel",
+          "lavagem",
+          "pastilha_freio",
+          "velas"
+        ]
+      },
       "LoginRequest": {
         "type": "object",
-        "required": ["username", "password"],
+        "required": [
+          "username",
+          "password"
+        ],
         "properties": {
           "username": {
-            "type": "string"
+            "type": "string",
+            "example": "admin"
           },
           "password": {
-            "type": "string"
+            "type": "string",
+            "example": "123456"
           }
         }
       },
-      "GastoRequest": {
+      "LoginResponse": {
         "type": "object",
-        "required": ["veiculoId", "tipo", "valor", "data"],
+        "required": [
+          "message",
+          "token",
+          "user"
+        ],
         "properties": {
+          "message": {
+            "type": "string",
+            "example": "Login realizado com sucesso."
+          },
+          "token": {
+            "type": "string",
+            "example": "token-1-admin"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "role"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "username": {
+            "type": "string",
+            "example": "admin"
+          },
+          "role": {
+            "type": "string",
+            "example": "gestor"
+          }
+        }
+      },
+      "Gasto": {
+        "type": "object",
+        "required": [
+          "id",
+          "veiculoId",
+          "tipo",
+          "valor",
+          "data",
+          "descricao"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
           "veiculoId": {
-            "type": "string"
+            "type": "string",
+            "example": "CAR-001"
           },
           "tipo": {
-            "type": "string",
-            "enum": ["oleo", "combustivel", "lavagem", "pastilha_freio", "velas"]
+            "$ref": "#/components/schemas/TipoGasto"
           },
           "valor": {
-            "type": "number"
+            "type": "number",
+            "format": "float",
+            "example": 350.75
           },
           "data": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "example": "2026-04-01"
           },
           "descricao": {
-            "type": "string"
+            "type": "string",
+            "example": "Abastecimento do inicio do mes"
+          }
+        }
+      },
+      "GastoCreateRequest": {
+        "type": "object",
+        "required": [
+          "veiculoId",
+          "tipo",
+          "valor",
+          "data"
+        ],
+        "properties": {
+          "veiculoId": {
+            "type": "string",
+            "example": "CAR-002"
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoGasto"
+          },
+          "valor": {
+            "type": "number",
+            "format": "float",
+            "example": 189.9
+          },
+          "data": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-04-10"
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Troca de oleo e filtro"
           }
         }
       },
@@ -211,20 +481,37 @@
         "type": "object",
         "properties": {
           "veiculoId": {
-            "type": "string"
+            "type": "string",
+            "example": "CAR-002"
           },
           "tipo": {
-            "type": "string"
+            "$ref": "#/components/schemas/TipoGasto"
           },
           "valor": {
-            "type": "number"
+            "type": "number",
+            "format": "float",
+            "example": 210
           },
           "data": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "example": "2026-04-10"
           },
           "descricao": {
-            "type": "string"
+            "type": "string",
+            "example": "Ajuste do valor da troca de oleo"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Gasto nao encontrado."
           }
         }
       }
