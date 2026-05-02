@@ -1,42 +1,76 @@
 # API Cadastro Autoescola
 
-API REST em Node.js para autenticação e controle de gastos dos veículos de uma autoescola.
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-43853D?logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?logo=swagger&logoColor=black)
+![Tests](https://img.shields.io/badge/tests-Mocha%20%2B%20Chai%20%2B%20Supertest-6E46AE)
 
-O projeto usa armazenamento em memória, possui documentação Swagger e testes funcionais para os principais fluxos da aplicação.
+API REST desenvolvida em Node.js para autenticação e controle de gastos dos veículos de uma autoescola.
 
-## Objetivo
+Este projeto foi estruturado para fins de estudo, prática de API REST, documentação com OpenAPI/Swagger e testes funcionais automatizados.
 
-Esta API foi criada para apoiar o cadastro e acompanhamento de gastos de veículos, como:
+## Visão geral
 
-- combustível
-- óleo
-- lavagem
-- pastilha de freio
-- velas
+A aplicação permite:
 
-## Tecnologias
+- autenticar um usuário da plataforma
+- listar gastos cadastrados
+- buscar um gasto por ID
+- criar novos gastos
+- atualizar um gasto existente
+- remover gastos
+
+Os dados são mantidos em memória, o que torna o projeto ideal para aprendizado, demonstração de conceitos e testes locais rápidos.
+
+## Demonstração local
+
+Com a API em execução, os principais acessos são:
+
+- API base: [http://localhost:3000](http://localhost:3000)
+- Swagger UI: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+## Tecnologias utilizadas
 
 - Node.js
 - Express
-- Swagger UI
+- Swagger UI Express
 - Mocha
 - Chai
 - Supertest
 
-## Estrutura do projeto
+## Arquitetura do projeto
 
 ```text
 .
-|-- Controle/      # controllers da aplicação
+|-- Controle/      # regras de entrada e saída da API
 |-- Model/         # estado em memória e dados iniciais
-|-- Servers/       # configuração do app e rotas
-|-- Swagger/       # especificação OpenAPI e Swagger UI
-|-- fixtures/      # massa de dados para testes
+|-- Servers/       # app Express e definição das rotas
+|-- Swagger/       # especificação OpenAPI e integração com Swagger UI
+|-- fixtures/      # massas de teste
+|-- login/         # testes funcionais de autenticação
 |-- gastos/        # testes funcionais de gastos
-|-- login/         # testes funcionais de login
-|-- docs/          # documentação complementar do projeto
-|-- index.js       # inicialização do servidor
+|-- docs/          # artefatos de documentação complementar
+|-- index.js       # bootstrap da aplicação
 |-- package.json
+```
+
+### Organização em camadas
+
+- `index.js` inicia o servidor HTTP
+- `Servers/app.js` configura o Express e publica o Swagger
+- `Servers/routes.js` centraliza os endpoints
+- `Controle/` contém os controllers da API
+- `Model/database.js` controla o estado em memória
+- `Model/initialData.js` define a carga inicial da aplicação
+
+## Fluxo da aplicação
+
+```mermaid
+flowchart LR
+    A["Cliente"] --> B["Rotas Express"]
+    B --> C["Controllers"]
+    C --> D["Estado em memória"]
+    B --> E["Swagger /api-docs"]
 ```
 
 ## Pré-requisitos
@@ -52,32 +86,26 @@ npm install
 
 ## Como executar
 
-Para iniciar a API localmente:
+Para iniciar o projeto:
 
 ```bash
 npm start
 ```
 
-O servidor sobe por padrão na porta `3000`.
+A aplicação sobe por padrão na porta `3000`.
 
-Se quiser alterar a porta:
+Para alterar a porta em sistemas Unix-like:
 
 ```bash
 PORT=4000 npm start
 ```
 
-No Windows PowerShell:
+Para alterar a porta no Windows PowerShell:
 
 ```powershell
 $env:PORT=4000
 npm start
 ```
-
-## Documentação da API
-
-Com a aplicação em execução, acesse:
-
-- Swagger UI: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
 ## Testes
 
@@ -87,49 +115,70 @@ Para rodar os testes automatizados:
 npm test
 ```
 
-Os testes cobrem os fluxos principais de:
+Cobertura funcional atual:
 
-- login
+- login com credenciais válidas
+- login com credenciais inválidas
 - listagem de gastos
 - criação de gasto
-- busca por ID
-- atualização
-- remoção
+- consulta por ID
+- atualização de gasto
+- remoção de gasto
 
 ## Dados iniciais
 
-Ao subir a aplicação, o estado inicial em memória contém:
+Ao iniciar a aplicação, o estado em memória começa com os dados abaixo.
 
 ### Usuário padrão
 
-- `username`: `admin`
-- `password`: `123456`
-- `role`: `gestor`
+```json
+{
+  "id": 1,
+  "username": "admin",
+  "password": "123456",
+  "role": "gestor"
+}
+```
 
 ### Gasto inicial
 
-- `id`: `1`
-- `veiculoId`: `CAR-001`
-- `tipo`: `combustivel`
-- `valor`: `350.75`
-- `data`: `2026-04-01`
+```json
+{
+  "id": 1,
+  "veiculoId": "CAR-001",
+  "tipo": "combustivel",
+  "valor": 350.75,
+  "data": "2026-04-01",
+  "descricao": "Abastecimento do início do mês"
+}
+```
 
 ## Persistência
 
-Os dados são mantidos apenas em memória.
+Esta API não utiliza banco de dados no estado atual.
 
 Isso significa que:
 
+- os dados são armazenados apenas em memória
 - reiniciar a aplicação restaura os dados iniciais
-- não há banco de dados configurado neste projeto
+- o projeto está preparado para evolução futura para uma persistência real
 
 ## Endpoints
 
-### `POST /login`
+| Método | Rota | Descrição |
+|---|---|---|
+| `POST` | `/login` | Realiza autenticação do usuário |
+| `GET` | `/gastos` | Lista todos os gastos |
+| `GET` | `/gastos/:id` | Busca um gasto por ID |
+| `POST` | `/gastos` | Cria um novo gasto |
+| `PUT` | `/gastos/:id` | Atualiza parcialmente um gasto |
+| `DELETE` | `/gastos/:id` | Remove um gasto |
 
-Realiza autenticação com `username` e `password`.
+## Exemplos de uso
 
-Exemplo de requisição:
+### Login
+
+Requisição:
 
 ```json
 {
@@ -138,7 +187,7 @@ Exemplo de requisição:
 }
 ```
 
-Exemplo de resposta `200`:
+Resposta `200`:
 
 ```json
 {
@@ -152,37 +201,9 @@ Exemplo de resposta `200`:
 }
 ```
 
-### `GET /gastos`
+### Criar gasto
 
-Lista todos os gastos cadastrados.
-
-Filtros opcionais por query string:
-
-- `veiculoId`
-- `tipo`
-
-Exemplos:
-
-- `GET /gastos`
-- `GET /gastos?veiculoId=CAR-001`
-- `GET /gastos?tipo=combustivel`
-
-### `GET /gastos/:id`
-
-Busca um gasto pelo identificador numérico.
-
-### `POST /gastos`
-
-Cria um novo gasto.
-
-Campos obrigatórios:
-
-- `veiculoId`
-- `tipo`
-- `valor` como número
-- `data`
-
-Exemplo de requisição:
+Requisição:
 
 ```json
 {
@@ -194,26 +215,30 @@ Exemplo de requisição:
 }
 ```
 
-### `PUT /gastos/:id`
-
-Atualiza parcialmente um gasto existente.
-
-Exemplo de requisição:
+Resposta `201`:
 
 ```json
 {
-  "valor": 95,
-  "descricao": "Lavagem completa com higienização"
+  "id": 2,
+  "veiculoId": "CAR-003",
+  "tipo": "lavagem",
+  "valor": 80,
+  "data": "2026-04-15",
+  "descricao": "Lavagem completa"
 }
 ```
 
-### `DELETE /gastos/:id`
+### Filtrar gastos
 
-Remove um gasto existente.
+Exemplos de consulta:
+
+- `GET /gastos`
+- `GET /gastos?veiculoId=CAR-001`
+- `GET /gastos?tipo=combustivel`
 
 ## Tipos de gasto aceitos
 
-Segundo a especificação OpenAPI do projeto:
+Conforme a especificação OpenAPI do projeto:
 
 - `oleo`
 - `combustivel`
@@ -223,7 +248,7 @@ Segundo a especificação OpenAPI do projeto:
 
 ## Exemplos com cURL
 
-### Login
+### Realizar login
 
 ```bash
 curl -X POST http://localhost:3000/login \
@@ -237,7 +262,7 @@ curl -X POST http://localhost:3000/login \
 curl http://localhost:3000/gastos
 ```
 
-### Criar gasto
+### Criar um gasto
 
 ```bash
 curl -X POST http://localhost:3000/gastos \
@@ -245,8 +270,23 @@ curl -X POST http://localhost:3000/gastos \
   -d "{\"veiculoId\":\"CAR-003\",\"tipo\":\"lavagem\",\"valor\":80,\"data\":\"2026-04-15\",\"descricao\":\"Lavagem completa\"}"
 ```
 
+## Diferenciais do projeto
+
+- documentação navegável com Swagger
+- testes funcionais cobrindo os principais fluxos da API
+- estrutura simples e organizada para estudo de arquitetura em camadas
+- base pronta para evolução com autenticação real e banco de dados
+
+## Melhorias futuras
+
+- adicionar autenticação protegendo as rotas de gastos
+- integrar banco de dados relacional ou NoSQL
+- incluir validação de payload com biblioteca dedicada
+- criar testes de cenários de erro adicionais
+- adicionar pipeline de CI
+
 ## Observações
 
-- a API atualmente não valida autenticação nas rotas de gastos
-- o token retornado no login é apenas ilustrativo
-- o projeto é adequado para estudo, prototipação e testes funcionais
+- o token retornado no login é ilustrativo
+- as rotas de gastos ainda não exigem autenticação
+- o projeto é voltado para aprendizado, portfólio e evolução incremental
