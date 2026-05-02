@@ -13,12 +13,12 @@ Este projeto foi estruturado para fins de estudo, prática de API REST, document
 
 A aplicação permite:
 
-- autenticar um usuário da plataforma
-- listar gastos cadastrados
-- buscar um gasto por ID
-- criar novos gastos
-- atualizar um gasto existente
-- remover gastos
+- Autenticar um usuário da plataforma
+- Listar gastos cadastrados
+- Buscar um gasto por ID
+- Criar novos gastos
+- Atualizar um gasto existente
+- Remover gastos
 
 Os dados são mantidos em memória, o que torna o projeto ideal para aprendizado, demonstração de conceitos e testes locais rápidos.
 
@@ -94,18 +94,6 @@ npm start
 
 A aplicação sobe por padrão na porta `3000`.
 
-Para alterar a porta em sistemas Unix-like:
-
-```bash
-PORT=4000 npm start
-```
-
-Para alterar a porta no Windows PowerShell:
-
-```powershell
-$env:PORT=4000
-npm start
-```
 
 ## Testes
 
@@ -117,41 +105,13 @@ npm test
 
 Cobertura funcional atual:
 
-- login com credenciais válidas
-- login com credenciais inválidas
-- listagem de gastos
-- criação de gasto
-- consulta por ID
-- atualização de gasto
-- remoção de gasto
-
-## Dados iniciais
-
-Ao iniciar a aplicação, o estado em memória começa com os dados abaixo.
-
-### Usuário padrão
-
-```json
-{
-  "id": 1,
-  "username": "admin",
-  "password": "123456",
-  "role": "gestor"
-}
-```
-
-### Gasto inicial
-
-```json
-{
-  "id": 1,
-  "veiculoId": "CAR-001",
-  "tipo": "combustivel",
-  "valor": 350.75,
-  "data": "2026-04-01",
-  "descricao": "Abastecimento do início do mês"
-}
-```
+- Login com credenciais válidas
+- Login com credenciais inválidas
+- Listagem de gastos
+- Criação de gasto
+- Consulta por ID
+- Atualização de gasto
+- Remoção de gasto
 
 ## Persistência
 
@@ -159,9 +119,9 @@ Esta API não utiliza banco de dados no estado atual.
 
 Isso significa que:
 
-- os dados são armazenados apenas em memória
-- reiniciar a aplicação restaura os dados iniciais
-- o projeto está preparado para evolução futura para uma persistência real
+- Os dados são armazenados apenas em memória
+- Reiniciar a aplicação restaura os dados iniciais
+- O projeto está preparado para evolução futura para uma persistência real
 
 ## Endpoints
 
@@ -174,119 +134,13 @@ Isso significa que:
 | `PUT` | `/gastos/:id` | Atualiza parcialmente um gasto |
 | `DELETE` | `/gastos/:id` | Remove um gasto |
 
-## Exemplos de uso
-
-### Login
-
-Requisição:
-
-```json
-{
-  "username": "admin",
-  "password": "123456"
-}
-```
-
-Resposta `200`:
-
-```json
-{
-  "message": "Login realizado com sucesso.",
-  "token": "token-1-admin",
-  "user": {
-    "id": 1,
-    "username": "admin",
-    "role": "gestor"
-  }
-}
-```
-
-### Criar gasto
-
-Requisição:
-
-```json
-{
-  "veiculoId": "CAR-003",
-  "tipo": "lavagem",
-  "valor": 80,
-  "data": "2026-04-15",
-  "descricao": "Lavagem completa"
-}
-```
-
-Resposta `201`:
-
-```json
-{
-  "id": 2,
-  "veiculoId": "CAR-003",
-  "tipo": "lavagem",
-  "valor": 80,
-  "data": "2026-04-15",
-  "descricao": "Lavagem completa"
-}
-```
-
-### Filtrar gastos
-
-Exemplos de consulta:
-
-- `GET /gastos`
-- `GET /gastos?veiculoId=CAR-001`
-- `GET /gastos?tipo=combustivel`
-
-## Tipos de gasto aceitos
-
-Conforme a especificação OpenAPI do projeto:
-
-- `oleo`
-- `combustivel`
-- `lavagem`
-- `pastilha_freio`
-- `velas`
-
-## Exemplos com cURL
-
-### Realizar login
-
-```bash
-curl -X POST http://localhost:3000/login \
-  -H "Content-Type: application/json" \
-  -d "{\"username\":\"admin\",\"password\":\"123456\"}"
-```
-
-### Listar gastos
-
-```bash
-curl http://localhost:3000/gastos
-```
-
-### Criar um gasto
-
-```bash
-curl -X POST http://localhost:3000/gastos \
-  -H "Content-Type: application/json" \
-  -d "{\"veiculoId\":\"CAR-003\",\"tipo\":\"lavagem\",\"valor\":80,\"data\":\"2026-04-15\",\"descricao\":\"Lavagem completa\"}"
-```
 
 ## Diferenciais do projeto
 
-- documentação navegável com Swagger
-- testes funcionais cobrindo os principais fluxos da API
-- estrutura simples e organizada para estudo de arquitetura em camadas
-- base pronta para evolução com autenticação real e banco de dados
+- Documentação navegável com Swagger
+- Testes funcionais cobrindo os principais fluxos da API
+- Estrutura simples e organizada para estudo de arquitetura em camadas
+- Base pronta para evolução com autenticação real e banco de dados
 
-## Melhorias futuras
 
-- adicionar autenticação protegendo as rotas de gastos
-- integrar banco de dados relacional ou NoSQL
-- incluir validação de payload com biblioteca dedicada
-- criar testes de cenários de erro adicionais
-- adicionar pipeline de CI
 
-## Observações
-
-- o token retornado no login é ilustrativo
-- as rotas de gastos ainda não exigem autenticação
-- o projeto é voltado para aprendizado, portfólio e evolução incremental
