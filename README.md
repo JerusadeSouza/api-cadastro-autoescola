@@ -5,14 +5,18 @@
 
 <img width="584" height="419" alt="image" src="https://github.com/user-attachments/assets/99b8b297-9b04-40ac-adbe-4f4c614972f3" />
 
+
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-43853D?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?logo=swagger&logoColor=black)
 ![Tests](https://img.shields.io/badge/tests-Mocha%20%2B%20Chai%20%2B%20Supertest-6E46AE)
 
-API REST desenvolvida em Node.js para autenticação e controle de gastos dos veículos de uma autoescola.
 
-Este projeto foi estruturado para fins de estudo, prática de API REST, documentação com OpenAPI/Swagger e testes funcionais automatizados.
+A **API Cadastro Autoescola** é uma API REST desenvolvida em **Node.js com Express** para simular a gestão de autenticação e o controle de gastos dos veículos de uma autoescola.
+
+O projeto permite realizar login, cadastrar, listar, consultar, atualizar e remover despesas, com documentação interativa via **Swagger** e cobertura de testes funcionais com **Mocha, Chai e Supertest**.
+
+Estruturada de forma simples e didática, a aplicação utiliza dados em memória, sendo ideal para **estudo, demonstração de boas práticas em APIs REST e evolução futura para autenticação real e persistência em banco de dados**.
 
 ## Visão geral
 
